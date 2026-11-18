@@ -1,10 +1,12 @@
 class DishItem {
-    constructor({ id, category, name, description, price }) {
-        this.id = Number(id);
+    constructor({ id, category, name, description, price, image, isApi = false }) {
+        this.id = /^\d+$/.test(String(id)) ? Number(id) : id;
         this.category = category;
         this.name = name;
         this.description = description;
         this.price = Number(price);
+        this.image = image || '';
+        this.isApi = isApi;
     }
 
     getFormattedPrice() {
@@ -27,7 +29,7 @@ class CartManager {
 
     addItem(dish) {
         if (!dish) return;
-        const existing = this.items.find(item => item.id === dish.id);
+        const existing = this.items.find(item => String(item.id) === String(dish.id));
         if (existing) {
             existing.quantity += 1;
         } else {
@@ -42,7 +44,7 @@ class CartManager {
     }
 
     updateQuantity(id, delta) {
-        const index = this.items.findIndex(item => item.id === Number(id));
+        const index = this.items.findIndex(item => String(item.id) === String(id));
         if (index === -1) return;
 
         this.items[index].quantity += delta;
@@ -53,7 +55,7 @@ class CartManager {
     }
 
     removeItem(id) {
-        this.items = this.items.filter(item => item.id !== Number(id));
+        this.items = this.items.filter(item => String(item.id) !== String(id));
         this.save();
     }
 

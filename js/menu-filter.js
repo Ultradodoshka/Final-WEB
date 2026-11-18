@@ -1,7 +1,6 @@
 $(document).ready(async function () {
     const apiService = new ChefSpecialsAPI();
 
-    // Safely read favorites
     let favorites = [];
     if (typeof StorageManager !== 'undefined') {
         favorites = StorageManager.get('supra_favorites', []);
@@ -56,7 +55,6 @@ $(document).ready(async function () {
         }
     ];
 
-    // Use DishItem instances if constructor accepts an object, otherwise keep normalized objects
     const baseDishes = (typeof INITIAL_MENU_DISHES !== 'undefined' && Array.isArray(INITIAL_MENU_DISHES))
         ? INITIAL_MENU_DISHES
         : rawBaseDishes.map(item => {
@@ -78,7 +76,7 @@ $(document).ready(async function () {
         const sortBy = $('#menu-sort-select').val() || 'default';
         const onlyFavorites = $('#menu-favorites-only').is(':checked');
 
-        // Filter dishes
+
         let filtered = allDishes.filter(dish => {
             const name = (dish.name || '').toLowerCase();
             const desc = (dish.description || '').toLowerCase();
@@ -88,7 +86,6 @@ $(document).ready(async function () {
             return matchesSearch && matchesCategory && matchesFav;
         });
 
-        // Sort dishes
         if (sortBy === 'price-asc') {
             filtered.sort((a, b) => Number(a.price) - Number(b.price));
         } else if (sortBy === 'price-desc') {
@@ -112,7 +109,7 @@ $(document).ready(async function () {
             return `
                 <div class="col-md-4 mb-4">
                     <div class="card h-100 shadow-sm">
-                        <img src="${dish.image}" class="card-img-top" alt="${dish.name}" style="height: 200px; object-fit: cover;">
+                        <img src="${dish.image || 'images/headergc.jpg'}" class="card-img-top" alt="${dish.name}" style="height: 200px; object-fit: cover;" onerror="this.onerror=null;this.src='images/headergc.jpg';">
                         <div class="card-body d-flex flex-column">
                             <div class="d-flex justify-content-between align-items-start mb-2">
                                 <span class="badge bg-secondary">${dish.category}</span>
@@ -137,10 +134,9 @@ $(document).ready(async function () {
         $catalog.html(html);
     }
 
-    // 1. Render base dishes immediately
+
     renderCatalog();
 
-    // 2. Register jQuery event listeners immediately
     $('#menu-search-input').on('input', renderCatalog);
     $('#menu-category-select, #menu-sort-select, #menu-favorites-only').on('change', renderCatalog);
 
@@ -174,7 +170,7 @@ $(document).ready(async function () {
         renderCatalog();
     });
 
-    // 3. Fetch external API specials and re-render catalog with merged dishes
+
     const apiDishes = await apiService.fetchSpecials('Beef');
     if (apiDishes && apiDishes.length > 0) {
         allDishes = [...baseDishes, ...apiDishes];

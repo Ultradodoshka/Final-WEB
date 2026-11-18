@@ -64,7 +64,7 @@ class ChefSpecialsAPI {
         const html = dishes.map(dish => `
             <div class="col-md-4 mb-4">
                 <div class="card h-100 shadow-sm">
-                    <img src="${dish.image}" class="card-img-top" alt="${dish.name}" style="height: 200px; object-fit: cover;">
+                    <img src="${dish.image || 'images/headergc.jpg'}" class="card-img-top" alt="${dish.name}" style="height: 200px; object-fit: cover;" onerror="this.onerror=null;this.src='images/headergc.jpg';">
                     <div class="card-body d-flex flex-column">
                         <span class="badge bg-warning text-dark align-self-start mb-2">${dish.category}</span>
                         <h5 class="card-title">${dish.name}</h5>
